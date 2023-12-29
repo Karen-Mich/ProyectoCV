@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 /**
  *
- * @author educo
+ * @author Cortez Sebastian
  */
 public class In_Registro extends javax.swing.JFrame {
 
