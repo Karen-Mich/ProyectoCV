@@ -1,13 +1,20 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -27,12 +34,14 @@ public class In_Registro extends javax.swing.JFrame {
     private Date horaEntradaManana;
     private Date horaEntradaTarde;
     private DefaultTableModel modeloTabla;
+    private final ZoneId zonaHoraria = ZoneId.of("America/Bogota"); 
 
     public In_Registro() {
         initComponents();
         setLocationRelativeTo(null);
         iniciarReloj();
         modeloTabla = (DefaultTableModel) jtbRegistro.getModel();
+        lbFecha.setText(obtenerFechaActual());
     }
 
     /**
@@ -53,6 +62,7 @@ public class In_Registro extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jtbRegistro = new javax.swing.JTable();
         jbtnRegistrarEntrada = new javax.swing.JButton();
+        lbFecha = new javax.swing.JLabel();
 
         jMenu1.setText("jMenu1");
 
@@ -97,35 +107,40 @@ public class In_Registro extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(218, 218, 218)
-                .addComponent(jbtnRegistrarEntrada)
-                .addGap(65, 65, 65)
-                .addComponent(jbtnRegistrarSalida)
-                .addGap(78, 78, 78)
-                .addComponent(jbtnCancelar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(218, 218, 218)
+                        .addComponent(jbtnRegistrarEntrada)
+                        .addGap(65, 65, 65)
+                        .addComponent(jbtnRegistrarSalida)
+                        .addGap(78, 78, 78)
+                        .addComponent(jbtnCancelar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(40, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 38, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jlblReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(315, 315, 315))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jlblReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(163, 163, 163))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(109, 109, 109)
+                .addGap(20, 20, 20)
+                .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbtnRegistrarEntrada)
                     .addComponent(jbtnRegistrarSalida)
                     .addComponent(jbtnCancelar))
-                .addGap(35, 35, 35)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(28, 28, 28)
                 .addComponent(jlblReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 880, 480));
@@ -143,9 +158,8 @@ public class In_Registro extends javax.swing.JFrame {
     }//GEN-LAST:event_jbtnRegistrarEntradaActionPerformed
     private void registrarEntrada() {
         if (horaEntradaManana == null) {
-            Date horaEntrada = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            String horaEntradaStr = sdf.format(horaEntrada);
+           ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
+           String horaEntradaStr = horaActual.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
             String jornada = obtenerJornadaActual();
 
@@ -191,8 +205,8 @@ public class In_Registro extends javax.swing.JFrame {
     }
 
     private String obtenerJornadaActual() {
-        SimpleDateFormat sdfHora = new SimpleDateFormat("HH");
-        int horaActual = Integer.parseInt(sdfHora.format(new Date()));
+        ZonedDateTime horaHoraria = obtenerHoraEcuador(zonaHoraria);
+        int horaActual = horaHoraria.getHour();
 
         if (horaActual >= 8 && horaActual < 13) {
             return "M";
@@ -204,18 +218,20 @@ public class In_Registro extends javax.swing.JFrame {
     }
 
     private String obtenerFechaActual() {
-        SimpleDateFormat sdfFecha = new SimpleDateFormat("yyyy-MM-dd");
-        return sdfFecha.format(new Date());
+        ZonedDateTime fechaActual = obtenerHoraEcuador(zonaHoraria);
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fechaStr = fechaActual.format(formatoFecha);
+        return fechaStr;
     }
 
     private void registrarSalida() {
         if (horaEntradaManana != null && horaEntradaTarde != null) {
-            Date horaSalida = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            String horaSalidaStr = sdf.format(horaSalida);
+             ZonedDateTime horaSalida = obtenerHoraEcuador(zonaHoraria);
+            String horaSalidaStr = horaSalida.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
-            long minutosTrabajados = (horaSalida.getTime() - horaEntradaManana.getTime()
-                    + horaSalida.getTime() - horaEntradaTarde.getTime()) / (60 * 1000);
+            long minutosTrabajados = (
+            horaSalida.toInstant().toEpochMilli() - horaEntradaManana.toInstant().toEpochMilli() +
+            horaSalida.toInstant().toEpochMilli() - horaEntradaTarde.toInstant().toEpochMilli()) / (60 * 1000);
 
             double descuento = calcularDescuento(minutosTrabajados);
             double sueldoFinal = 800 - descuento;
@@ -270,8 +286,8 @@ public class In_Registro extends javax.swing.JFrame {
         try {
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tu_base_de_datos", "tu_usuario", "tu_contraseña");
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String fechaActual = sdf.format(new Date());
+            String fechaActual = obtenerHoraEcuador(zonaHoraria).toLocalDate().toString();
+
 
             String query = "SELECT ID_ASI FROM registros_asistencia WHERE CED_EMP_ASI = ? AND FEC_ASI = ?";
             pst = con.prepareStatement(query);
@@ -321,9 +337,38 @@ public class In_Registro extends javax.swing.JFrame {
     }
 
     private void actualizarHora() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String horaActual = sdf.format(new Date());
-        jlblReloj.setText(horaActual);
+        ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String horaFormateada = horaActual.format(formato);
+
+        jlblReloj.setText(horaFormateada);
+    }
+    
+    private ZonedDateTime obtenerHoraEcuador(ZoneId zonaHoraria) {
+        String urlServicioHora = "http://worldtimeapi.org/api/timezone/" + zonaHoraria.toString();
+
+        try {
+            URL url = new URL(urlServicioHora);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String linea;
+
+            while ((linea = reader.readLine()) != null) {
+                response.append(linea);
+            }
+            reader.close();
+
+            String respuestaJSON = response.toString();
+            String dateTime = respuestaJSON.split("\"datetime\":\"")[1].split("\"")[0];
+
+            return ZonedDateTime.parse(dateTime);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ZonedDateTime.now(zonaHoraria);
+        }
     }
 
     /**
@@ -371,5 +416,6 @@ public class In_Registro extends javax.swing.JFrame {
     private javax.swing.JButton jbtnRegistrarSalida;
     private javax.swing.JLabel jlblReloj;
     private javax.swing.JTable jtbRegistro;
+    private javax.swing.JLabel lbFecha;
     // End of variables declaration//GEN-END:variables
 }
