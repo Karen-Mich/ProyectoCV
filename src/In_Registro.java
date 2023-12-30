@@ -1,4 +1,5 @@
 
+import Clases.Conexion;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -18,7 +19,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import javax.swing.JComponent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -42,9 +44,10 @@ public class In_Registro extends javax.swing.JFrame {
     private Date horaEntradaManana;
     private Date horaEntradaTarde;
     private DefaultTableModel modeloTabla;
-    private final ZoneId zonaHoraria = ZoneId.of("America/Bogota"); 
+    private final ZoneId zonaHoraria = ZoneId.of("America/Bogota");
+    private Conexion conn = new Conexion();
 
-    public In_Registro() {
+    public In_Registro() throws SQLException {
         initComponents();
         setLocationRelativeTo(null);
         iniciarReloj();
@@ -229,23 +232,27 @@ public class In_Registro extends javax.swing.JFrame {
     }//GEN-LAST:event_jbtnRegistrarSalidaActionPerformed
 
     private void jbtnRegistrarEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnRegistrarEntradaActionPerformed
-       registrarEntrada();
+        try {
+            registrarEntrada();
+        } catch (SQLException ex) {
+            Logger.getLogger(In_Registro.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jbtnRegistrarEntradaActionPerformed
 
     private void jbtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnCancelarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jbtnCancelarActionPerformed
-    private void registrarEntrada() {
+    private void registrarEntrada() throws SQLException {
         if (horaEntradaManana == null) {
-           ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
-           String horaEntradaStr = horaActual.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
+            ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
+            String horaEntradaStr = horaActual.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            //String horaEntradaStr = conn.obtenerHoraBD();
+            
             String jornada = obtenerJornadaActual();
-
+            
             if (jornada != null) {
                 try {
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tu_base_de_datos", "tu_usuario", "tu_contraseña");
-
+                    Connection con = conn.conexion();
                     String query = "INSERT INTO registros_asistencia (CED_EMP_ASI, FEC_ASI) VALUES (?, ?)";
                     PreparedStatement pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                     pst.setString(1, cedulaEmpleado);
@@ -296,27 +303,32 @@ public class In_Registro extends javax.swing.JFrame {
         }
     }
 
-    private String obtenerFechaActual() {
-        ZonedDateTime fechaActual = obtenerHoraEcuador(zonaHoraria);
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fechaStr = fechaActual.format(formatoFecha);
-        return fechaStr;
+//    private String obtenerFechaActual() {
+//        ZonedDateTime fechaActual = obtenerHoraEcuador(zonaHoraria);
+//        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String fechaStr = fechaActual.format(formatoFecha);
+//        return fechaStr;
+//    }
+     private String obtenerFechaActual() throws SQLException {
+        Conexion con = new Conexion();
+        String fecha = con.obtenerFechaBD();
+        return fecha;
     }
 
     private void registrarSalida() {
         if (horaEntradaManana != null && horaEntradaTarde != null) {
-             ZonedDateTime horaSalida = obtenerHoraEcuador(zonaHoraria);
+            ZonedDateTime horaSalida = obtenerHoraEcuador(zonaHoraria);
             String horaSalidaStr = horaSalida.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
-            long minutosTrabajados = (
-            horaSalida.toInstant().toEpochMilli() - horaEntradaManana.toInstant().toEpochMilli() +
-            horaSalida.toInstant().toEpochMilli() - horaEntradaTarde.toInstant().toEpochMilli()) / (60 * 1000);
+            //String horaSalidaStr = conn.obtenerHoraBD();
+            
+            long minutosTrabajados = (horaSalida.toInstant().toEpochMilli() - horaEntradaManana.toInstant().toEpochMilli()
+                    + horaSalida.toInstant().toEpochMilli() - horaEntradaTarde.toInstant().toEpochMilli()) / (60 * 1000);
 
             double descuento = calcularDescuento(minutosTrabajados);
             double sueldoFinal = 800 - descuento;
 
             try {
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tu_base_de_datos", "tu_usuario", "tu_contraseña");
+                Connection con = conn.conexion();
                 String query = "UPDATE jornada SET FEC_HOR_SAL = ?, DESCUENTO_MIN = ? WHERE ID_ASI_PER = ?";
                 PreparedStatement pst = con.prepareStatement(query);
                 pst.setString(1, horaSalidaStr);
@@ -363,10 +375,8 @@ public class In_Registro extends javax.swing.JFrame {
         int idAsistencia = 0;
 
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tu_base_de_datos", "tu_usuario", "tu_contraseña");
-
+            con = conn.conexion();
             String fechaActual = obtenerHoraEcuador(zonaHoraria).toLocalDate().toString();
-
 
             String query = "SELECT ID_ASI FROM registros_asistencia WHERE CED_EMP_ASI = ? AND FEC_ASI = ?";
             pst = con.prepareStatement(query);
@@ -408,21 +418,30 @@ public class In_Registro extends javax.swing.JFrame {
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actualizarHora();
+                try {
+                    actualizarHora();
+                } catch (SQLException ex) {
+                    Logger.getLogger(In_Registro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
         timer.start();
     }
 
-    private void actualizarHora() {
-        ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
-        String horaFormateada = horaActual.format(formato);
-
+//    private void actualizarHora() {
+//        ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
+//        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+//        String horaFormateada = horaActual.format(formato);
+//
+//        jlblReloj.setText(horaFormateada);
+//    }
+    private void actualizarHora() throws SQLException {
+        Conexion con = new Conexion();
+        String horaFormateada = con.obtenerHoraBD();
         jlblReloj.setText(horaFormateada);
     }
-    
+
     private ZonedDateTime obtenerHoraEcuador(ZoneId zonaHoraria) {
         String urlServicioHora = "http://worldtimeapi.org/api/timezone/" + zonaHoraria.toString();
 
@@ -480,7 +499,11 @@ public class In_Registro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new In_Registro().setVisible(true);
+                try {
+                    new In_Registro().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(In_Registro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
