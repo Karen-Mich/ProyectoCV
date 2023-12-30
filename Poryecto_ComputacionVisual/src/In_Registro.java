@@ -1,4 +1,6 @@
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -16,9 +18,15 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -56,6 +64,7 @@ public class In_Registro extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         jlblReloj = new javax.swing.JLabel();
         jbtnCancelar = new javax.swing.JButton();
         jbtnRegistrarSalida = new javax.swing.JButton();
@@ -63,6 +72,8 @@ public class In_Registro extends javax.swing.JFrame {
         jtbRegistro = new javax.swing.JTable();
         jbtnRegistrarEntrada = new javax.swing.JButton();
         lbFecha = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         jMenu1.setText("jMenu1");
 
@@ -71,19 +82,60 @@ public class In_Registro extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jlblReloj.setFont(new java.awt.Font("Raleway Black", 0, 36)); // NOI18N
+        jPanel1.setBackground(new java.awt.Color(227, 227, 206));
+        jPanel1.setLayout(null);
 
+        jLabel2.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel1.add(jLabel2);
+        jLabel2.setBounds(260, 20, 340, 90);
+
+        jlblReloj.setBackground(new java.awt.Color(163, 8, 8));
+        jlblReloj.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jlblReloj.setForeground(new java.awt.Color(255, 255, 255));
+        jlblReloj.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlblReloj.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jlblReloj.setOpaque(true);
+        jPanel1.add(jlblReloj);
+        jlblReloj.setBounds(260, 60, 340, 50);
+
+        jbtnCancelar.setBackground(new java.awt.Color(51, 51, 51));
+        jbtnCancelar.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jbtnCancelar.setForeground(new java.awt.Color(204, 204, 204));
         jbtnCancelar.setText("Cancelar");
+        jbtnCancelar.setBorder(null);
+        jbtnCancelar.setContentAreaFilled(false);
+        jbtnCancelar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbtnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnCancelarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jbtnCancelar);
+        jbtnCancelar.setBounds(510, 130, 130, 60);
 
+        jbtnRegistrarSalida.setBackground(new java.awt.Color(51, 51, 51));
+        jbtnRegistrarSalida.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jbtnRegistrarSalida.setForeground(new java.awt.Color(204, 204, 204));
         jbtnRegistrarSalida.setText("Registrar Salida");
+        jbtnRegistrarSalida.setBorder(null);
+        jbtnRegistrarSalida.setContentAreaFilled(false);
+        jbtnRegistrarSalida.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jbtnRegistrarSalida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbtnRegistrarSalidaActionPerformed(evt);
             }
         });
+        jPanel1.add(jbtnRegistrarSalida);
+        jbtnRegistrarSalida.setBounds(370, 130, 140, 60);
 
+        jtbRegistro.setBackground(new java.awt.Color(227, 227, 206));
+        jtbRegistro.setForeground(new java.awt.Color(51, 51, 51));
         jtbRegistro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
@@ -92,58 +144,81 @@ public class In_Registro extends javax.swing.JFrame {
             new String [] {
                 "Cedula", "Registro", "Entrada", "Salida"
             }
-        ));
-        jScrollPane1.setViewportView(jtbRegistro);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jtbRegistro.setShowGrid(true);
+        jScrollPane1.setViewportView(jtbRegistro);
+        Color miColor = new Color(163,8,8);
+        JTableHeader tableHeader = jtbRegistro.getTableHeader();
+
+        tableHeader.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setOpaque(true); // Hacer que el label sea opaco
+                label.setBackground(miColor); // Establecer el color de fondo del encabezado
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setForeground(Color.WHITE);
+                return label;
+            }
+        });
+        if (jtbRegistro.getColumnModel().getColumnCount() > 0) {
+            jtbRegistro.getColumnModel().getColumn(0).setResizable(false);
+            jtbRegistro.getColumnModel().getColumn(1).setResizable(false);
+            jtbRegistro.getColumnModel().getColumn(2).setResizable(false);
+            jtbRegistro.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        jPanel1.add(jScrollPane1);
+        jScrollPane1.setBounds(30, 220, 820, 140);
+
+        jbtnRegistrarEntrada.setBackground(new java.awt.Color(51, 51, 51));
+        jbtnRegistrarEntrada.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jbtnRegistrarEntrada.setForeground(new java.awt.Color(204, 204, 204));
         jbtnRegistrarEntrada.setText("Registrar Entrada");
+        jbtnRegistrarEntrada.setBorder(null);
+        jbtnRegistrarEntrada.setContentAreaFilled(false);
+        jbtnRegistrarEntrada.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jbtnRegistrarEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbtnRegistrarEntradaActionPerformed(evt);
             }
         });
+        jPanel1.add(jbtnRegistrarEntrada);
+        jbtnRegistrarEntrada.setBounds(220, 130, 150, 60);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(218, 218, 218)
-                        .addComponent(jbtnRegistrarEntrada)
-                        .addGap(65, 65, 65)
-                        .addComponent(jbtnRegistrarSalida)
-                        .addGap(78, 78, 78)
-                        .addComponent(jbtnCancelar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(40, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jlblReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(163, 163, 163))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbtnRegistrarEntrada)
-                    .addComponent(jbtnRegistrarSalida)
-                    .addComponent(jbtnCancelar))
-                .addGap(28, 28, 28)
-                .addComponent(jlblReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
-        );
+        lbFecha.setBackground(new java.awt.Color(163, 8, 8));
+        lbFecha.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        lbFecha.setForeground(new java.awt.Color(255, 255, 255));
+        lbFecha.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbFecha.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lbFecha.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        lbFecha.setOpaque(true);
+        jPanel1.add(lbFecha);
+        lbFecha.setBounds(260, 20, 340, 40);
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 880, 480));
+        jLabel1.setBackground(new java.awt.Color(51, 51, 51));
+        jLabel1.setOpaque(true);
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(0, 130, 880, 60);
+
+        jLabel3.setBackground(new java.awt.Color(163, 8, 8));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("© Grupo 5 - Control de Empleados");
+        jLabel3.setOpaque(true);
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(0, 420, 880, 60);
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 880, 480));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -156,6 +231,10 @@ public class In_Registro extends javax.swing.JFrame {
     private void jbtnRegistrarEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnRegistrarEntradaActionPerformed
        registrarEntrada();
     }//GEN-LAST:event_jbtnRegistrarEntradaActionPerformed
+
+    private void jbtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnCancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbtnCancelarActionPerformed
     private void registrarEntrada() {
         if (horaEntradaManana == null) {
            ZonedDateTime horaActual = obtenerHoraEcuador(zonaHoraria);
@@ -407,6 +486,9 @@ public class In_Registro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
