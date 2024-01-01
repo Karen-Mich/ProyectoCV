@@ -5,6 +5,8 @@
  */
 package interfaces;
 
+import clases.Empleados;
+
 /**
  *
  * @author Sammy Guergachi <sguergachi at gmail.com>
@@ -14,8 +16,13 @@ public class ReportesAdmin extends javax.swing.JFrame {
     /**
      * Creates new form ReportesAdmin
      */
+    
+    Empleados em = new Empleados();
+    
     public ReportesAdmin() {
         initComponents();
+        em.cargarTabla(jtblEmpleados);
+        em.tomarValor(jtblEmpleados, jtxtCedula);
     }
 
     /**
@@ -113,7 +120,7 @@ public class ReportesAdmin extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(579, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -126,9 +133,7 @@ public class ReportesAdmin extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
