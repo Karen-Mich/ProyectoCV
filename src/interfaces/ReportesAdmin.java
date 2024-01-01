@@ -166,6 +166,7 @@ public class ReportesAdmin extends javax.swing.JFrame {
           // Usa este dato para la fecha, y la formateas como puedas: 
           String fecha = year+"-"+mesS; // seria 2024-02 etc
           System.out.println(fecha);
+          
     }//GEN-LAST:event_jbtnReporteActionPerformed
 
     /**
