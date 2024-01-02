@@ -39,7 +39,7 @@ public class EmpleadoCRUD extends javax.swing.JFrame {
     /**
      * Creates new form EstudianteObjeto
      */
-    public EmpleadoCRUD() {
+    public EmpleadoCRUD() { 
         initComponents();
         setLocationRelativeTo(null);
         setSize(916, 700);
@@ -472,6 +472,11 @@ if(jtxtNombre.getText().trim().isEmpty()) {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        ReportesAdmin repAd = new ReportesAdmin();
+        repAd.setVisible(true);
+
+    // Cerrar o esconder el frame actual si es necesario
+        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jtxtTokenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtTokenActionPerformed
