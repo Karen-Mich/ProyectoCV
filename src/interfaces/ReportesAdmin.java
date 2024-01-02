@@ -32,6 +32,11 @@ public class ReportesAdmin extends javax.swing.JFrame {
     private ReportesDAO rd = new ReportesDAO();
     private reporte r;
     private List<reporte> lr;
+    private Empleados e;
+    private final int sueldoInicial = 2000;
+    private double sueldoFinal;
+    private double cantMinAtr;
+    private double cantMinDesc;
 
     Empleados em = new Empleados();
 
@@ -41,6 +46,10 @@ public class ReportesAdmin extends javax.swing.JFrame {
         em.tomarValor(jtblEmpleados, jtxtCedula);
         r = new reporte();
         lr = new ArrayList<>();
+        e = new Empleados();
+        sueldoFinal = 0;
+        cantMinAtr = 0;
+        cantMinDesc = 0;
     }
 
     private void openpdf(String file) {
@@ -58,9 +67,6 @@ public class ReportesAdmin extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Cannot Load Pdf");
         }
-    }
-
-    private void cabeceraDocumento() {
     }
 
     private void formatoDocumento() {
@@ -86,6 +92,22 @@ public class ReportesAdmin extends javax.swing.JFrame {
             cell1.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
             cell2.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
 
+            Paragraph pa = new Paragraph();
+
+            pa.add("\n\n");
+            pa.add("UNIVERSIDAD TECNICA DE AMBATO\n\n");
+            pa.add("REPORTE DEL MENSUAL\n\n");
+            pa.setAlignment(pa.ALIGN_CENTER);
+            //pa.setFont(FontFactory.getFont("TAHOMA",25,Font.BOLD, BaseColor.DARK_GRAY));
+
+            Paragraph pa2 = new Paragraph();
+
+            pa2.add("Cedula: " + e.getCedula() + "\n");
+            pa2.add("Nombre: " + e.getNombre() + "\n");
+            pa2.add("Apellido: " + e.getApellido() + "\n");
+            pa2.add("Direccion: " + e.getDireccion() + "\n");
+            pa2.add("Celular: " + e.getTelefono() + "\n\n\n");
+            pa2.setAlignment(pa.ALIGN_LEFT);
             d.open();
 
             PdfPTable c = new PdfPTable(2);
@@ -108,15 +130,27 @@ public class ReportesAdmin extends javax.swing.JFrame {
                 t.addCell(p.getJornada());
                 t.addCell(p.getHoraEntrada());
                 t.addCell(String.valueOf(p.getMinutosAtraso()));
+                cantMinAtr += p.getMinutosAtraso();
                 t.addCell(p.getHoraSalida());
                 t.addCell(String.valueOf(p.getMinutosDescuento()));
+                cantMinDesc += p.getMinutosDescuento();
+
             }
+            sueldoFinal = sueldoInicial - cantMinAtr * 0.25 - cantMinDesc * 0.25;
+            Paragraph pa3 = new Paragraph();
+            pa3.add("\n\n");
+            pa3.add("Cantidad Total de Minutos de Atraso: " + cantMinAtr + "\n");
+            pa3.add("Cantidad Total de Minutos de Descuento: " + cantMinDesc + "\n");
+            pa3.add("Minutos de Atraso x 0.25: " + cantMinAtr * 0.25 + "\n");
+            pa3.add("Minutos de Descuento x 0.25: " + cantMinDesc * 0.25 + "\n");
+            pa3.add("Sueldo Inicial: " + sueldoInicial + "$\n\n");
+            pa3.add("Sueldo Final: " + sueldoFinal + "$\n");
 
             d.add(c);
-            Paragraph paragraph = new Paragraph();
-            paragraph.add("\n\n\n");
-            d.add(paragraph);
+            d.add(pa);
+            d.add(pa2);
             d.add(t);
+            d.add(pa3);
             d.close();
 
             System.out.println("Se creo?");
@@ -171,6 +205,11 @@ public class ReportesAdmin extends javax.swing.JFrame {
 
             }
         ));
+        jtblEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtblEmpleadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtblEmpleados);
 
         jbtnReporte.setText("Generar Reporte");
@@ -294,14 +333,17 @@ public class ReportesAdmin extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (!this.jtxtCedula.getText().isEmpty()) {
             if (jyearChooser.getYear() > 2000) {
-                if (jmesChooser.getMonth() != 0) {
+                if (jmesChooser.getMonth() >= 0) {
                     String cedula = this.jtxtCedula.getText();
                     int anio = jyearChooser.getYear();
                     int mes = jmesChooser.getMonth() + 1;
                     lr = rd.listar(cedula, anio, mes);
-                    ;
-                    System.out.println(cedula + " " + anio + " " + mes + " " + lr.get(1).getFecha());
-                    formatoDocumento();
+                    if (lr.size() > 0) {
+                        formatoDocumento();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No hay Datos que mostrar");
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(this, "Seleccione un Mes");
                 }
@@ -328,6 +370,15 @@ public class ReportesAdmin extends javax.swing.JFrame {
         EmpCru.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jbtnRegresarActionPerformed
+
+    private void jtblEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtblEmpleadosMouseClicked
+        int fila = this.jtblEmpleados.rowAtPoint(evt.getPoint());
+        e.setCedula(this.jtblEmpleados.getValueAt(fila, 0).toString());
+        e.setNombre(this.jtblEmpleados.getValueAt(fila, 1).toString());
+        e.setApellido(this.jtblEmpleados.getValueAt(fila, 2).toString());
+        e.setDireccion(this.jtblEmpleados.getValueAt(fila, 3).toString());
+        e.setTelefono(this.jtblEmpleados.getValueAt(fila, 4).toString());
+    }//GEN-LAST:event_jtblEmpleadosMouseClicked
 
     /**
      * @param args the command line arguments
