@@ -3,9 +3,6 @@ package clases;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,7 +15,7 @@ public class Conexion {
     public Connection conectar (){
         try {
             //Class.forName("com.mysql.jdbc.Driver");
-            connect = DriverManager.getConnection("jdbc:mysql://localhost/asistencia","root","");
+            connect = DriverManager.getConnection("jdbc:mysql://localhost/registro_empleados","root","1805162433");//cambie de nombre
             //JOptionPane.showMessageDialog(null, "CONECTADO");
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex);
