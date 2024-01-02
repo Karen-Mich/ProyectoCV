@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package interfaces;
 
 import clases.Conexion;
@@ -22,68 +18,64 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.netbeans.lib.awtextra.*;
 
-
 /**
  *
  * @author DELL
- * 
+ *
  */
-
 public class EmpleadoCRUD extends javax.swing.JFrame {
+
     Conexion cc = new Conexion();
     Connection cn;
     DefaultTableModel modelTable;
-    
+
     //Estudiante1 estudiante = new Estudiante1();
-    
     /**
      * Creates new form EstudianteObjeto
      */
-    public EmpleadoCRUD() { 
+    public EmpleadoCRUD() {
         initComponents();
         setLocationRelativeTo(null);
         setSize(916, 700);
         cn = cc.conectar();
         cargarTabla();
-        
-        getContentPane().setBackground(new Color(234,234,234));
-         setResizable(false);
-         
-         int anchoDeseado = 120; // Cambia esto al ancho deseado
-int columnaEspecifica = 6; // Cambia esto al índice de la columna que deseas ajustar
 
-tblTabla.getColumnModel().getColumn(columnaEspecifica).setPreferredWidth(anchoDeseado);
+        getContentPane().setBackground(new Color(234, 234, 234));
+        setResizable(false);
 
-        
+        int anchoDeseado = 120; // Cambia esto al ancho deseado
+        int columnaEspecifica = 6; // Cambia esto al índice de la columna que deseas ajustar
+
+        tblTabla.getColumnModel().getColumn(columnaEspecifica).setPreferredWidth(anchoDeseado);
+
         jtxtCedula.addKeyListener(new KeyAdapter() {
-    @Override
-    public void keyTyped(KeyEvent e) {
-        char c = e.getKeyChar();
-        if (!Character.isDigit(c)) {
-            e.consume(); // Ignorar el evento de tecla si no es un número
-        }
-    }
-});
-        
-        jtxtTelefono.addKeyListener(new KeyAdapter() {
-    @Override
-    public void keyTyped(KeyEvent e) {
-        char c = e.getKeyChar();
-        if (!Character.isDigit(c)) {
-            e.consume(); // Ignorar el evento de tecla si no es un número
-        }
-    }
-});
-        jtxtRol.addKeyListener(new KeyAdapter() {
-    @Override
-    public void keyTyped(KeyEvent e) {
-        char c = e.getKeyChar();
-        if (!Character.isDigit(c)) {
-            e.consume(); // Ignorar el evento de tecla si no es un número
-        }
-    }
-});
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    e.consume(); // Ignorar el evento de tecla si no es un número
+                }
+            }
+        });
 
+        jtxtTelefono.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    e.consume(); // Ignorar el evento de tecla si no es un número
+                }
+            }
+        });
+        jtxtRol.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    e.consume(); // Ignorar el evento de tecla si no es un número
+                }
+            }
+        });
 
         tblTabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -103,9 +95,9 @@ tblTabla.getColumnModel().getColumn(columnaEspecifica).setPreferredWidth(anchoDe
             }
         });
     }
-    
+
     public void cargarTabla() {
-        modelTable = new DefaultTableModel(new String[]{"Cédula", "Nombre", "Apellido", "Dirección", "Telefono","Clave","Correo","Token","Rol"}, 0);
+        modelTable = new DefaultTableModel(new String[]{"Cédula", "Nombre", "Apellido", "Dirección", "Telefono", "Clave", "Correo", "Token", "Rol"}, 0);
         String sql = "SELECT * FROM empleados;";
         ResultSet rs = null;
         try {
@@ -129,66 +121,60 @@ tblTabla.getColumnModel().getColumn(columnaEspecifica).setPreferredWidth(anchoDe
             Logger.getLogger(EmpleadoCRUD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-        
+
     public boolean verificarCampos() {
-    String cedula = jtxtCedula.getText().trim();
-    String telefono = jtxtTelefono.getText().trim();
-    String rol = jtxtRol.getText().trim();
+        String cedula = jtxtCedula.getText().trim();
+        String telefono = jtxtTelefono.getText().trim();
+        String rol = jtxtRol.getText().trim();
 
-    boolean esValido = true;
-    
-    if (cedula.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Debe ingresar la cédula");
-    esValido = false;
-} else if (cedula.length() != 10 || !cedula.matches("\\d+")) {
-    JOptionPane.showMessageDialog(this, "La cédula debe contener exactamente 10 números");
-    esValido = false;
-}
-    
-if(jtxtNombre.getText().trim().isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar el nombre");
-      esValido = false;
+        boolean esValido = true;
+
+        if (cedula.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar la cédula");
+            esValido = false;
+        } else if (cedula.length() != 10 || !cedula.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "La cédula debe contener exactamente 10 números");
+            esValido = false;
+        }
+
+        if (jtxtNombre.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el nombre");
+            esValido = false;
+        }
+        if (jtxtApellido.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el apellido");
+            esValido = false;
+        }
+
+        if (jtxtDireccion.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar la dirección");
+            esValido = false;
+        }
+
+        if (telefono.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el teléfono");
+            esValido = false;
+        } else if (telefono.length() != 10 || !telefono.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "El teléfono debe contener exactamente 10 números");
+            esValido = false;
+        }
+
+        if (jtxtCorreo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el correo");
+            esValido = false;
+        }
+
+        if (rol.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el rol");
+            esValido = false;
+        } else if (rol.length() != 1 || !rol.matches("[01]")) {
+            JOptionPane.showMessageDialog(this, "El rol puede ser 0 o 1.");
+            esValido = false;
+        }
+
+        return esValido;
     }
-    if(jtxtApellido.getText().trim().isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar el apellido");
-      esValido = false;
-    }
 
-    
-    if(jtxtDireccion.getText().trim().isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar la dirección");
-      esValido = false;
-    }
-
-
-    if(telefono.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar el teléfono");
-      esValido = false; 
-    }  else if (telefono.length() != 10 || !telefono.matches("\\d+")) {
-    JOptionPane.showMessageDialog(this, "El teléfono debe contener exactamente 10 números");
-    esValido = false;
-}
-    
-        if(jtxtCorreo.getText().trim().isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar el correo");
-      esValido = false;
-    }
-        
-            if(rol.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "Debe ingresar el rol");
-      esValido = false;
-    } else if (rol.length() != 1 || !rol.matches("[01]")) {
-    JOptionPane.showMessageDialog(this, "El rol puede ser 0 o 1.");
-    esValido = false;
-}
-
-    return esValido;
-}
-    
-    
-   
-
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -408,9 +394,8 @@ if(jtxtNombre.getText().trim().isEmpty()) {
     private void jtxtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtxtNombreActionPerformed
-    
-     
-    
+
+
     private void jbtnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNuevoActionPerformed
         jtxtCedula.setText("");
         jtxtNombre.setText("");
@@ -421,7 +406,7 @@ if(jtxtNombre.getText().trim().isEmpty()) {
         jtxtToken.setText("");
         jtxtCorreo.setText("");
         jtxtRol.setText("");
-    
+
 // TODO add your handling code here:
     }//GEN-LAST:event_jbtnNuevoActionPerformed
 
@@ -431,12 +416,12 @@ if(jtxtNombre.getText().trim().isEmpty()) {
 
     private void jbtnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnEditarActionPerformed
         if (!verificarCampos()) {
-        JOptionPane.showMessageDialog(this, "Por favor edite los campos correctamente");
-        return;
-    }
-        
-        Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(),jtxtClave.getText(), jtxtCorreo.getText(),
-        jtxtToken.getText(), jtxtRol.getText());
+            JOptionPane.showMessageDialog(this, "Por favor edite los campos correctamente");
+            return;
+        }
+
+        Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(), jtxtClave.getText(), jtxtCorreo.getText(),
+                jtxtToken.getText(), jtxtRol.getText());
         int n = e.actualizarEstudiante();
         if (n == 1) {
             JOptionPane.showMessageDialog(this, "Editado correctamente");
@@ -446,23 +431,23 @@ if(jtxtNombre.getText().trim().isEmpty()) {
 
     private void jbtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarActionPerformed
         if (!verificarCampos()) {
-        JOptionPane.showMessageDialog(this, "Por favor complete todos los campos correctamente");
-        return;
-    }
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos correctamente");
+            return;
+        }
 
-    Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(),jtxtClave.getText(), jtxtToken.getText(),
-        jtxtCorreo.getText(), jtxtRol.getText());
-    int n = e.agregarEstudiante();
+        Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(), jtxtClave.getText(), jtxtToken.getText(),
+                jtxtCorreo.getText(), jtxtRol.getText());
+        int n = e.agregarEstudiante();
 
-    if (n == 1) {
-        JOptionPane.showMessageDialog(this, "Guardado correctamente");
-        cargarTabla();
-    }
+        if (n == 1) {
+            JOptionPane.showMessageDialog(this, "Guardado correctamente");
+            cargarTabla();
+        }
     }//GEN-LAST:event_jbtnGuardarActionPerformed
 
     private void jbtnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBorrarActionPerformed
-        Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(),jtxtClave.getText(), jtxtToken.getText(),
-        jtxtCorreo.getText(), jtxtRol.getText());
+        Empleados e = new Empleados(jtxtCedula.getText(), jtxtNombre.getText(), jtxtApellido.getText(), jtxtDireccion.getText(), jtxtTelefono.getText(), jtxtClave.getText(), jtxtToken.getText(),
+                jtxtCorreo.getText(), jtxtRol.getText());
         int n = e.borrarEstudiante();
         if (n == 1) {
             JOptionPane.showMessageDialog(this, "Borrado correctamente");
@@ -475,7 +460,7 @@ if(jtxtNombre.getText().trim().isEmpty()) {
         ReportesAdmin repAd = new ReportesAdmin();
         repAd.setVisible(true);
 
-    // Cerrar o esconder el frame actual si es necesario
+        // Cerrar o esconder el frame actual si es necesario
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -487,7 +472,6 @@ if(jtxtNombre.getText().trim().isEmpty()) {
         // TODO add your handling code here:
     }//GEN-LAST:event_jtxtCedulaActionPerformed
 
-    
     /**
      * @param args the command line arguments
      */
@@ -524,7 +508,7 @@ if(jtxtNombre.getText().trim().isEmpty()) {
                 new EmpleadoCRUD().setVisible(true);
             }
         });
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
