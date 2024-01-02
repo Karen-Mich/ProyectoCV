@@ -62,6 +62,11 @@ public class Principal extends javax.swing.JFrame {
         userBtn.setFont(new java.awt.Font("Swis721 BT", 1, 14)); // NOI18N
         userBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/usuario-de-perfil.png"))); // NOI18N
         userBtn.setText("USUARIO");
+        userBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(userBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 460, 180, 50));
 
         logolbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logoUTA.png"))); // NOI18N
@@ -81,6 +86,14 @@ public class Principal extends javax.swing.JFrame {
     // Cerrar o esconder el frame actual si es necesario
         this.dispose();
     }//GEN-LAST:event_adminBtnActionPerformed
+
+    private void userBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userBtnActionPerformed
+        // TODO add your handling code here:
+          // TODO add your handling code here:
+
+        
+        
+    }//GEN-LAST:event_userBtnActionPerformed
 
     /**
      * @param args the command line arguments
